@@ -1,0 +1,9 @@
+{
+  "globals": {
+    "jQuery": true,
+    "console": true,
+    "module": true
+  },
+  "quotmark": false,
+  "globalstrict": true
+}

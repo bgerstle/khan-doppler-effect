@@ -1,0 +1,20 @@
+{
+  "name": "doppler-effect",
+  "version": "1.0.0",
+  "description": "Khan Academy program demonstrating the Doppler effect.",
+  "main": "doppler.js",
+  "scripts": {
+    "test": "node_modules/.bin/grunt test"
+  },
+  "author": "Brian Gerstle",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jasmine": "^0.8.0",
+    "node-qunit-phantomjs": "^0.2.2"
+  },
+  "dependencies": {
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-jshint": "^0.10.0"
+  }
+}
