@@ -62,7 +62,15 @@ var DUtils = {
 * ////////////////////////////////////////////////
 */
 var DMath = {
+  /**
+   * Speed of sound in m/s.
+   */
   c: 340.29,
+
+  /**
+   * Formula for observed frequency due to the Doppler effect:
+   * http://en.wikipedia.org/wiki/Doppler_effect#General
+   */
   observedFrequency: function (relSourceVelocity, sourceFreq) {
     // inverting relSourceVelocity because we're assuming listener's velocity is 0
     return (1 + relSourceVelocity / DMath.c) * sourceFreq;
