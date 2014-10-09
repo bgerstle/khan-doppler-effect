@@ -1,15 +1,17 @@
 /**
-* This is an animation which demonstrates the Doppler effect: why sounds have a higher pitch as they approach you and
-* lower as they move away, like a car driving by (or in this case, a spaceship).
+* This is an animation which demonstrates the Doppler effect: why sounds have a higher pitch as they
+* approach you and lower as they move away, like a car driving by (or in this case, a spaceship).
 *
 * The top sine wave is the sound emitted by the spaceship which stays the same the whole itme.
 *
-* The bottom sine wave is the sound received by the girl with bunny ears, it starts of at a higher pitch than the spaceship's original sound and eventually
-* falls below it.  You can see this because the waveform starts out more "compressed" than the original waveform (i.e. higher frequency & shorter wavelength)
-* then ends up longer than the original.
+* The bottom sine wave is the sound received by the girl with bunny ears, it starts of at a higher
+* pitch than the spaceship's original sound and eventually falls below it.  You can see this because
+* the waveform starts out more "compressed" than the original waveform (i.e. higher frequency &
+* shorter wavelength) then ends up longer than the original.
 *
-* You can also see the change in frequency by looking at the red dots that are plotted on top of the listener.  The x axis is time and the y axis is
-* frequency, where the middle of the canvas is equal to the original frequency.
+* You can also see the change in frequency by looking at the red dots that are plotted on top of the
+* listener.  The x axis is time and the y axis is frequency, where the middle of the canvas is equal
+* to the original frequency.
 */
 
 /**
@@ -67,9 +69,27 @@ var DMath = {
   },
 
   /**
-   * Returns the source's velocity with respect to the listener
+   * Calculates the radial velocity of the source relative to the listener:
+   *
+   *             L
+   *            /
+   *           /
+   *          / \
+   *         /  <theta>
+   *        /      \
+   *       S -----------> V
+   *
+   * Where S is the source, L is the listener, and the velocity vector S-L is the radial velocity
+   * while theta is the angle between S-L and S's velocity vector, V.  We can calculate the velocity
+   * S-L by mulitplying V by cos(theta).  We can calculate theta by remembering SOHCAHTOA, which
+   * tells us that tan(theta) = opposite / adjacent.  In this case, we know "opposite" (the
+   * difference in y position between the source and listener) and adjacent (the difference in x
+   * position).  So, to calculate theta, we take atan(opposote / adjacent). This gives us everything
+   * we need to calculate the radial velocity.
+   *
+   * 1: http://en.wikipedia.org/wiki/Velocity#Relative_velocity
    */
-  relativeHorizontalVelocity: function (source, horizVelocity, listener) {
+  radialVelocity: function (source, sourceVelocity, listener) {
     // if the listener is the reference, moving towards it is postive and
     // away is negative
     var directionModifier = source.x < listener.x ? 1.0 : -1.0,
@@ -79,7 +99,7 @@ var DMath = {
       // angle between listener line of sight & source velocity is 90 deg, whose cos is 0
       return 0;
     }
-    return horizVelocity * directionModifier * cos(atan(opposite / adjacent));
+    return sourceVelocity * directionModifier * cos(atan(opposite / adjacent));
   }
 };
 
@@ -295,7 +315,7 @@ var createElements = function (exports) {
       var sourceVelocityMulitplier = 30;
       return DUtils.freq2Rad(
         DMath.observedFrequency(
-          DMath.relativeHorizontalVelocity(src.pvector(), sourceVelocityMulitplier * srcMover.velocity, listener.pvector()),
+          DMath.radialVelocity(src.pvector(), sourceVelocityMulitplier * srcMover.velocity, listener.pvector()),
           srcTone.getFrequency()));
     }
   });

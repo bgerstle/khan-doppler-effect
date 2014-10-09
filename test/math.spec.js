@@ -3,7 +3,7 @@ cos = Math.cos;
 atan = Math.atan;
 abs = Math.abs;
 
-describe('relativeHorizontalVelocity', function () {
+describe('radialVelocity', function () {
   var listener = {x: 5, y: 5},
   velocity = 1;
 
@@ -11,7 +11,7 @@ describe('relativeHorizontalVelocity', function () {
     for (var y = 0; y < 10; y++) {
       for (var x = 0; x < 5; x++) {
         var source = {x: x, y: y};
-        var v = DMath.relativeHorizontalVelocity(source, velocity, listener);
+        var v = DMath.radialVelocity(source, velocity, listener);
         // console.log(['source ',
         //               JSON.stringify(source),
         //               ' listener: ',
@@ -27,7 +27,7 @@ describe('relativeHorizontalVelocity', function () {
     for (var y = 0; y < 10; y++) {
       for (var x = 6; x <= 10; x++) {
         var source = {x: x, y: y};
-        var v = DMath.relativeHorizontalVelocity(source, velocity, listener);
+        var v = DMath.radialVelocity(source, velocity, listener);
         // console.log(['source ',
         //               JSON.stringify(source),
         //               ' listener: ',
@@ -40,7 +40,7 @@ describe('relativeHorizontalVelocity', function () {
   });
 
   it('should be zero when at the listener', function () {
-    expect(DMath.relativeHorizontalVelocity(listener, velocity, listener))
+    expect(DMath.radialVelocity(listener, velocity, listener))
     .toBe(0);
   });
 });
