@@ -1,8 +1,15 @@
 /**
-* !!! WORK IN PROGRESS !!!
+* This is an animation which demonstrates the Doppler effect: why sounds have a higher pitch as they approach you and
+* lower as they move away, like a car driving by (or in this case, a spaceship).
 *
-* This is an interactive animation which demonstrates the Doppler effect: why sounds rise in pitch as they approach you and
-* fall as they move away, like a car driving by (or in this case, a spaceship).
+* The top sine wave is the sound emitted by the spaceship which stays the same the whole itme.
+*
+* The bottom sine wave is the sound received by the girl with bunny ears, it starts of at a higher pitch than the spaceship's original sound and eventually
+* falls below it.  You can see this because the waveform starts out more "compressed" than the original waveform (i.e. higher frequency & shorter wavelength)
+* then ends up longer than the original.
+*
+* You can also see the change in frequency by looking at the red dots that are plotted on top of the listener.  The x axis is time and the y axis is
+* frequency, where the middle of the canvas is equal to the original frequency.
 */
 
 /**
@@ -56,7 +63,7 @@ var DMath = {
   c: 340.29,
   observedFrequency: function (relSourceVelocity, sourceFreq) {
     // inverting relSourceVelocity because we're assuming listener's velocity is 0
-    return (1 + -relSourceVelocity / DMath.c) * sourceFreq;
+    return (1 + relSourceVelocity / DMath.c) * sourceFreq;
   },
 
   /**
@@ -65,11 +72,12 @@ var DMath = {
   relativeHorizontalVelocity: function (source, horizVelocity, listener) {
     // if the listener is the reference, moving towards it is postive and
     // away is negative
-    var directionModifier = source.x <= listener.x ? 1.0 : -1.0,
+    var directionModifier = source.x < listener.x ? 1.0 : -1.0,
         opposite = abs(source.y - listener.y),
         adjacent = abs(source.x - listener.x);
     if (adjacent === 0) {
-      return horizVelocity * directionModifier;
+      // angle between listener line of sight & source velocity is 90 deg, whose cos is 0
+      return 0;
     }
     return horizVelocity * directionModifier * cos(atan(opposite / adjacent));
   }
@@ -167,7 +175,7 @@ init: function (props) {
 },
 draw: function (frame) {
   beginShape();
-  for (var x = 0; x < this.width; x += 4) {
+  for (var x = 0; x < this.width; x += 2) {
     curveVertex(
       x + this.x,
       this.y + this.tone.value(x + frame));
@@ -226,8 +234,7 @@ Graph.prototype = DUtils.withDefaults({
         for (var i in this.points) {
             var normalizedP = this.points[i];
             var p = this.denormalized(normalizedP);
-            debug("plotting ", p, " from ", normalizedP);
-            point(p.x,p.y);
+            point(p.x, p.y);
         }
     },
     addPoint: function (x, y) {
@@ -269,7 +276,7 @@ var createElements = function (exports) {
   exports.srcMover = srcMover;
 
   var srcTone = new Tone({
-    freq: 1,
+    freq: 3,
     amp: 20
   });
   exports.srcTone = srcTone;
@@ -284,9 +291,11 @@ var createElements = function (exports) {
      * decreasing as it moves away.
      */
     radians: function () {
+      // scaling up the velocity here to exaggerate doppler effect w/o having the image move across the screen too quickly
+      var sourceVelocityMulitplier = 30;
       return DUtils.freq2Rad(
         DMath.observedFrequency(
-          DMath.relativeHorizontalVelocity(src.pvector(), srcMover.velocity, listener.pvector()),
+          DMath.relativeHorizontalVelocity(src.pvector(), sourceVelocityMulitplier * srcMover.velocity, listener.pvector()),
           srcTone.getFrequency()));
     }
   });
@@ -320,6 +329,7 @@ var createElements = function (exports) {
 // TODO: expose slider for velocity
 // TODO: add "step" button/functionality
 // TODO: show source and perceived frequency
+// TODO: add labels for waveforms
 
 /**
 * ////////////////////////////////////////////////
@@ -332,11 +342,12 @@ var draw = function() {
     elements = createElements();
   }
   noFill();
-  imageMode(CENTER);
   background(255, 255, 255);
   strokeWeight(1);
   stroke(0,0,0);
-  // not animating the waveforms makes it easier to see the change in observed frequency
+  imageMode(CENTER);
+
+  // passing `0` to prevent waveforms from animation, which makes it easier to see the change in observed frequency
   elements.srcToneWaveformView.draw(0);
   elements.listenerToneWaveformView.draw(0);
   elements.listener.draw();
@@ -349,8 +360,8 @@ var draw = function() {
       srcTone = elements.srcTone,
       listenerTone = elements.listenerTone;
 
-  var srcProgress = max(-1, (src.x - src.width / 2) / width);
-  var freqRatio = listenerTone.getFrequency() / srcTone.getFrequency();
+  var srcProgress = src.x / width - 0.5;
+  var freqRatio = (listenerTone.getFrequency() - srcTone.getFrequency()) / 10;
 
   elements.freqGraph.addPoint(srcProgress, freqRatio);
   elements.freqGraph.draw();

@@ -39,8 +39,8 @@ describe('relativeHorizontalVelocity', function () {
     }
   });
 
-  it('should be the velocity when on the listener', function () {
+  it('should be zero when at the listener', function () {
     expect(DMath.relativeHorizontalVelocity(listener, velocity, listener))
-    .toBe(velocity);
+    .toBe(0);
   });
 });
