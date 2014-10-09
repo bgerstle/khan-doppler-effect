@@ -336,8 +336,8 @@ var createElements = function (exports) {
 * Render callback
 * ////////////////////////////////////////////////
 */
-var elements;
-var draw = function() {
+var elements = null;
+draw = function() {
   if (!elements) {
     elements = createElements();
   }
